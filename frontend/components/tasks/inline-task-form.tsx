@@ -121,7 +121,7 @@ export function InlineTaskForm() {
 
       {/* Submit Button */}
       <div className="flex justify-end">
-        <Button type="submit" className="w-full md:w-auto">
+        <Button type="submit" className="w-full md:w-auto bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
           <Plus className="mr-2 h-4 w-4" />
           Add Task
         </Button>

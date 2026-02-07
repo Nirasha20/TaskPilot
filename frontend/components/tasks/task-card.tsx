@@ -96,7 +96,7 @@ export function TaskCard({ task }: TaskCardProps) {
 
   return (
     <>
-      <Card className={`transition-all ${task.isTracking ? 'ring-2 ring-primary' : ''}`}>
+      <Card className={`transition-all duration-300 hover:shadow-lg ${task.isTracking ? 'ring-2 ring-violet-500 shadow-violet-500/20' : 'hover:border-violet-200 dark:hover:border-violet-800'} bg-gradient-to-br from-card to-card/50`}>
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 space-y-2">
@@ -185,6 +185,7 @@ export function TaskCard({ task }: TaskCardProps) {
                   size="sm"
                   variant="destructive"
                   onClick={() => stopTimer(task.id)}
+                  className="shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <Pause className="mr-2 h-4 w-4" />
                   Stop Timer
@@ -194,6 +195,7 @@ export function TaskCard({ task }: TaskCardProps) {
                   size="sm"
                   onClick={() => startTimer(task.id)}
                   disabled={task.status === 'completed'}
+                  className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <Play className="mr-2 h-4 w-4" />
                   Start Timer

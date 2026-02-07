@@ -35,13 +35,13 @@ export default function DashboardPage() {
     return null
   }
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-violet-50/20 dark:to-violet-950/20">
       <DashboardHeader />
-      <main className="container mx-auto px-4 lg:px-6 py-6 space-y-8">
+      <main className="container mx-auto px-4 lg:px-6 py-6 space-y-8 animate-fade-in">
         {/* Task Creation Section - Top */}
-        <section className="bg-card border border-border rounded-lg p-6 shadow-sm">
+        <section className="bg-gradient-to-br from-card to-card/50 border border-border/50 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
           <div className="mb-4">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">Create New Task</h2>
+            <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">Create New Task</h2>
             <p className="text-sm text-muted-foreground mt-1">Add a new task to your list and start tracking</p>
           </div>
           <InlineTaskForm />
@@ -50,16 +50,16 @@ export default function DashboardPage() {
         {/* Tasks List Section */}
         <section className="space-y-4">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">My Tasks</h2>
+            <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">My Tasks</h2>
             <p className="text-sm text-muted-foreground mt-1">Track, manage, and complete your daily tasks</p>
           </div>
           <AdvancedTaskList />
         </section>
 
         {/* Analytics Section - Bottom */}
-        <section className="space-y-6 mt-12 pt-8 border-t border-border">
+        <section className="space-y-6 mt-12 pt-8 border-t border-border/50">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">Analytics & Insights</h2>
+            <h2 className="text-2xl font-bold tracking-tight bg-gradient-to-r from-cyan-600 to-violet-600 bg-clip-text text-transparent">Analytics & Insights</h2>
             <p className="text-sm text-muted-foreground mt-1">Your productivity overview</p>
           </div>
           

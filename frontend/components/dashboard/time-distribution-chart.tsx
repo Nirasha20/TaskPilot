@@ -28,21 +28,24 @@ export function TimeDistributionChart() {
 
   if (chartData.length === 0) {
     return (
-      <Card>
+      <Card className=\"shadow-lg hover:shadow-xl transition-all duration-300 border-border/50\">
         <CardHeader>
-          <CardTitle>Time Distribution by Category</CardTitle>
+          <CardTitle className=\"bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent\">Time Distribution by Category</CardTitle>
         </CardHeader>
-        <CardContent className="h-80 flex items-center justify-center text-muted-foreground">
-          <p>No data yet. Start tracking to see your productivity breakdown.</p>
+        <CardContent className=\"h-80 flex items-center justify-center text-muted-foreground\">
+          <div className=\"text-center space-y-2\">
+            <div className=\"text-4xl\">📊</div>
+            <p>No data yet. Start tracking to see your productivity breakdown.</p>
+          </div>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card>
+    <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border-border/50">
       <CardHeader>
-        <CardTitle>Time Distribution by Category</CardTitle>
+        <CardTitle className="bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">Time Distribution by Category</CardTitle>
       </CardHeader>
       <CardContent className="h-80">
         <ResponsiveContainer width="100%" height="100%">

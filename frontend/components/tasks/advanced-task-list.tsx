@@ -74,7 +74,7 @@ export function AdvancedTaskList() {
   return (
     <div className="space-y-4">
       {/* Filters and Search */}
-      <div className="bg-card border border-border rounded-lg p-4 space-y-4">
+      <div className="bg-gradient-to-br from-card to-card/50 border border-border/50 rounded-xl p-4 space-y-4 shadow-md">
         {/* Search Bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -158,7 +158,7 @@ export function AdvancedTaskList() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="w-full h-9"
+              className="w-full h-9 hover:bg-violet-50 hover:text-violet-600 hover:border-violet-300 dark:hover:bg-violet-950 dark:hover:text-violet-400 transition-all duration-300"
               disabled={filteredAndSortedTasks.length === 0}
             >
               <Download className="mr-2 h-4 w-4" />
@@ -171,8 +171,9 @@ export function AdvancedTaskList() {
       {/* Task List */}
       <div className="space-y-3">
         {filteredAndSortedTasks.length === 0 ? (
-          <div className="text-center py-12 bg-card border border-border rounded-lg">
-            <p className="text-muted-foreground">
+          <div className=\"text-center py-12 bg-gradient-to-br from-card to-card/50 border border-border/50 rounded-xl shadow-md\">
+            <div className=\"text-6xl mb-4\">✨</div>
+            <p className=\"text-muted-foreground text-lg\">
               {tasks.length === 0
                 ? 'No tasks yet. Create your first task above!'
                 : 'No tasks match your filters.'}
