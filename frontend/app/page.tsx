@@ -1,8 +1,14 @@
-export default function Home() {
-  return (
-    <main>
-      <h1>Welcome to TaskPilot</h1>
-      <p>Your task management application</p>
-    </main>
-  )
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+export default function Page() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push('/auth')
+  }, [router])
+
+  return null
 }
