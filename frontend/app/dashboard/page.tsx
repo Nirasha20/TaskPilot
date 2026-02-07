@@ -34,5 +34,45 @@ export default function DashboardPage() {
   if (!isAuthenticated) {
     return null
   }
-    return ()
+    return (
+        <div className="min-h-screen bg-background">
+      <DashboardHeader />
+      <main className="container mx-auto px-4 lg:px-6 py-6 space-y-8">
+        {/* Task Creation Section - Top */}
+        <section className="bg-card border border-border rounded-lg p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Create New Task</h2>
+            <p className="text-sm text-muted-foreground mt-1">Add a new task to your list and start tracking</p>
+          </div>
+          <InlineTaskForm />
+        </section>
+
+        {/* Tasks List Section */}
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">My Tasks</h2>
+            <p className="text-sm text-muted-foreground mt-1">Track, manage, and complete your daily tasks</p>
+          </div>
+          <AdvancedTaskList />
+        </section>
+
+        {/* Analytics Section - Bottom */}
+        <section className="space-y-6 mt-12 pt-8 border-t border-border">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Analytics & Insights</h2>
+            <p className="text-sm text-muted-foreground mt-1">Your productivity overview</p>
+          </div>
+          
+          {/* Stats Cards */}
+          <Analytics />
+
+          {/* Charts Section */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <TimeDistributionChart />
+            <DailyProgressChart />
+          </div>
+        </section>
+      </main>
+    </div>
+    )
 }
