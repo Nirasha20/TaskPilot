@@ -31,13 +31,13 @@ export function DailyProgressChart() {
 
   if (!hasData) {
     return (
-      <Card className=\"shadow-lg hover:shadow-xl transition-all duration-300 border-border/50\">
+      <Card className="shadow-lg hover:shadow-xl transition-all duration-300 border-border/50">
         <CardHeader>
-          <CardTitle className=\"bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent\">Last 7 Days Progress</CardTitle>
+          <CardTitle className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Last 7 Days Progress</CardTitle>
         </CardHeader>
-        <CardContent className=\"h-80 flex items-center justify-center text-muted-foreground\">
-          <div className=\"text-center space-y-2\">
-            <div className=\"text-4xl\">📈</div>
+        <CardContent className="h-80 flex items-center justify-center text-muted-foreground">
+          <div className="text-center space-y-2">
+            <div className="text-4xl">📈</div>
             <p>Start tracking tasks to see your progress.</p>
           </div>
         </CardContent>

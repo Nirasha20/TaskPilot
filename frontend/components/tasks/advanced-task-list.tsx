@@ -171,9 +171,9 @@ export function AdvancedTaskList() {
       {/* Task List */}
       <div className="space-y-3">
         {filteredAndSortedTasks.length === 0 ? (
-          <div className=\"text-center py-12 bg-gradient-to-br from-card to-card/50 border border-border/50 rounded-xl shadow-md\">
-            <div className=\"text-6xl mb-4\">✨</div>
-            <p className=\"text-muted-foreground text-lg\">
+          <div className="text-center py-12 bg-gradient-to-br from-card to-card/50 border border-border/50 rounded-xl shadow-md">
+            <div className="text-6xl mb-4">✨</div>
+            <p className="text-muted-foreground text-lg">
               {tasks.length === 0
                 ? 'No tasks yet. Create your first task above!'
                 : 'No tasks match your filters.'}
