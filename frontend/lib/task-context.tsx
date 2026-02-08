@@ -142,7 +142,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
             // Sync with backend every 10 seconds
             if (newTime % 10 === 0) {
               fetch(`${API_URL}/tasks/${task.id}`, {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ total_time: newTime }),
               }).catch((err) => console.error('Failed to sync time:', err))
@@ -191,7 +191,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   const updateTask = async (id: string, updates: Partial<Task>) => {
     try {
       const response = await fetch(`${API_URL}/tasks/${id}`, {
-        method: 'PATCH',
+        method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify(toBackendFormat(updates)),
       })

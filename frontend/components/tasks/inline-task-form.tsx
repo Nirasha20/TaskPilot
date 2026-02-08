@@ -17,7 +17,7 @@ export function InlineTaskForm() {
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
   const [tags, setTags] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!title.trim()) {
@@ -25,25 +25,30 @@ export function InlineTaskForm() {
       return
     }
 
-    addTask({
-      title: title.trim(),
-      description: description.trim(),
-      status: 'todo',
-      priority,
-      category,
-      totalTime: 0,
-      tags: tags
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== ''),
-    })
+    try {
+      await addTask({
+        title: title.trim(),
+        description: description.trim(),
+        status: 'todo',
+        priority,
+        category,
+        totalTime: 0,
+        tags: tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ''),
+      })
 
-    // Reset form
-    setTitle('')
-    setDescription('')
-    setCategory('general')
-    setPriority('medium')
-    setTags('')
+      // Reset form on success
+      setTitle('')
+      setDescription('')
+      setCategory('general')
+      setPriority('medium')
+      setTags('')
+    } catch (error) {
+      console.error('Failed to add task:', error)
+      alert('Failed to add task. Please check the console for details.')
+    }
   }
 
   return (

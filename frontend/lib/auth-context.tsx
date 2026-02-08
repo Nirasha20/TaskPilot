@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+
 export interface User {
   id: string
   email: string
@@ -23,64 +25,81 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Initialize user from localStorage
+  // Initialize user from localStorage (token and user info)
   useEffect(() => {
+    const token = localStorage.getItem('token')
     const storedUser = localStorage.getItem('user')
-    if (storedUser) {
+    
+    if (token && storedUser) {
       try {
         setUser(JSON.parse(storedUser))
       } catch (error) {
         console.error('Failed to parse stored user:', error)
         localStorage.removeItem('user')
+        localStorage.removeItem('token')
       }
     }
     setIsLoading(false)
   }, [])
 
   const register = async (email: string, username: string, password: string) => {
-    // Check if user already exists
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
-    if (users.some((u: any) => u.email === email)) {
-      throw new Error('User already exists')
-    }
+    try {
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, username, password }),
+      })
 
-    // Create new user
-    const newUser: User = {
-      id: Date.now().toString(),
-      email,
-      username,
-    }
+      const data = await response.json()
 
-    // Store hashed password (simplified - in production use proper backend hashing)
-    const userWithPassword = {
-      ...newUser,
-      password: btoa(password), // Basic encoding, not secure for production
-    }
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed')
+      }
 
-    users.push(userWithPassword)
-    localStorage.setItem('users', JSON.stringify(users))
-    localStorage.setItem('user', JSON.stringify(newUser))
-    setUser(newUser)
+      // Backend returns: { status: 'success', data: { user: {...}, token: '...' } }
+      const { user, token } = data.data
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify({ ...user, id: user.id.toString() }))
+      setUser({ ...user, id: user.id.toString() })
+    } catch (error) {
+      console.error('Registration error:', error)
+      throw error
+    }
   }
 
   const login = async (email: string, password: string) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]')
-    const foundUser = users.find(
-      (u: any) => u.email === email && u.password === btoa(password)
-    )
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (!foundUser) {
-      throw new Error('Invalid email or password')
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed')
+      }
+
+      // Backend returns: { status: 'success', data: { user: {...}, token: '...' } }
+      const { user, token } = data.data
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify({ ...user, id: user.id.toString() }))
+      setUser({ ...user, id: user.id.toString() })
+    } catch (error) {
+      console.error('Login error:', error)
+      throw error
     }
-
-    const { password: _, ...userWithoutPassword } = foundUser
-    setUser(userWithoutPassword)
-    localStorage.setItem('user', JSON.stringify(userWithoutPassword))
   }
 
   const logout = () => {
     setUser(null)
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
   }
 
   return (

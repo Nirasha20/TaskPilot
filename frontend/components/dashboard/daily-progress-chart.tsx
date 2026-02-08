@@ -11,27 +11,14 @@ export function DailyProgressChart() {
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date()
     date.setDate(date.getDate() - (6 - i))
-    date.setHours(0, 0, 0, 0)
     return date
   })
 
   const chartData = last7Days.map((date) => {
-    const nextDay = new Date(date)
-    nextDay.setDate(nextDay.getDate() + 1)
-    
-    // Count tasks completed on this specific day
-    const completed = tasks.filter((t) => {
-      if (t.status !== 'completed' || !t.completedAt) return false
-      const completedDate = new Date(t.completedAt)
-      return completedDate >= date && completedDate < nextDay
-    }).length
-    
-    // Sum time from tasks that have any time tracked
-    // Note: Since we don't track daily time separately, we show cumulative time
-    // A better approach would be to track time entries per day
-    const timeSpent = tasks
-      .filter((t) => t.totalTime > 0)
-      .reduce((sum, t) => sum + (t.totalTime / 7), 0) // Distribute time evenly as approximation
+    const dateStr = date.toDateString()
+    const dayTasks = tasks.filter((t) => new Date(t.createdAt).toDateString() === dateStr)
+    const completed = dayTasks.filter((t) => t.status === 'completed').length
+    const timeSpent = dayTasks.reduce((sum, t) => sum + t.totalTime, 0)
 
     return {
       date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
