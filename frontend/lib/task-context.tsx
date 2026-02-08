@@ -191,7 +191,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   const updateTask = async (id: string, updates: Partial<Task>) => {
     try {
       const response = await fetch(`${API_URL}/tasks/${id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: getAuthHeaders(),
         body: JSON.stringify(toBackendFormat(updates)),
       })
@@ -276,10 +276,16 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
           ? 'in-progress'
           : 'completed'
 
-    await updateTask(taskId, {
+    const updates: Partial<Task> = {
       status: newStatus,
-      completedAt: newStatus === 'completed' ? new Date().toISOString() : undefined,
-    })
+    }
+    
+    // Set completedAt when marking as completed
+    if (newStatus === 'completed') {
+      updates.completedAt = new Date().toISOString()
+    }
+
+    await updateTask(taskId, updates)
   }
 
   return (

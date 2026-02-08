@@ -71,6 +71,11 @@ export const updateTask = asyncHandler(
     if (updateData.status === 'completed' && !updateData.completed_at) {
       updateData.completed_at = new Date();
     }
+    
+    // If status is being changed from completed to something else, clear completed_at
+    if (updateData.status && updateData.status !== 'completed') {
+      updateData.completed_at = null;
+    }
 
     // If starting tracking, stop all other tracking tasks
     if (updateData.is_tracking === true) {
