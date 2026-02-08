@@ -1,11 +1,10 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { pool } from './config/database';
+import { pool, initializeDatabase, testConnection } from './config/database';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
 import taskRoutes from './routes/taskRoutes';
-import { initializeDatabase, testConnection } from './config/initDatabase';
 
 dotenv.config();
 
