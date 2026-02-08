@@ -41,11 +41,16 @@ export const login = createAsyncThunk(
         return rejectWithValue(data.message || 'Login failed')
       }
 
+      console.log('Login response:', data)
+      console.log('Token to save:', data.data.token)
+
       // Save to localStorage
-      localStorage.setItem('token', data.token)
+      localStorage.setItem('token', data.data.token)
       localStorage.setItem('user', JSON.stringify(data.data.user))
 
-      return { user: data.data.user, token: data.token }
+      console.log('Token saved to localStorage:', localStorage.getItem('token'))
+
+      return { user: data.data.user, token: data.data.token }
     } catch (error: any) {
       return rejectWithValue(error.message || 'Network error')
     }
@@ -72,10 +77,10 @@ export const register = createAsyncThunk(
       }
 
       // Save to localStorage
-      localStorage.setItem('token', data.token)
+      localStorage.setItem('token', data.data.token)
       localStorage.setItem('user', JSON.stringify(data.data.user))
 
-      return { user: data.data.user, token: data.token }
+      return { user: data.data.user, token: data.data.token }
     } catch (error: any) {
       return rejectWithValue(error.message || 'Network error')
     }
@@ -87,10 +92,18 @@ export const loadUser = createAsyncThunk('auth/loadUser', async (_, { rejectWith
     const token = localStorage.getItem('token')
     const userStr = localStorage.getItem('user')
 
-    if (token && userStr) {
+    console.log('loadUser - Token from localStorage:', token ? `${token.substring(0, 20)}...` : token)
+
+    // Validate token exists and is not 'undefined' string
+    if (token && token !== 'undefined' && token !== 'null' && userStr) {
       return { user: JSON.parse(userStr), token }
     }
 
+    // Clear invalid data
+    console.warn('Invalid token detected, clearing localStorage')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    
     return rejectWithValue('No authentication data found')
   } catch (error: any) {
     return rejectWithValue(error.message || 'Failed to load user')

@@ -63,6 +63,7 @@ const toBackendFormat = (task: any) => {
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token')
+  console.log('getAuthHeaders - Token from localStorage:', token ? `${token.substring(0, 20)}...` : 'null/undefined')
   return {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
