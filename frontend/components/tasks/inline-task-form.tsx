@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useTask } from '@/lib/task-context'
+import { useAppDispatch } from '@/lib/redux/hooks'
+import { addTask } from '@/lib/redux/slices/tasksSlice'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select } from '@/components/ui/select'
@@ -10,14 +11,14 @@ import { Label } from '@/components/ui/label'
 import { Plus } from 'lucide-react'
 
 export function InlineTaskForm() {
-  const { addTask } = useTask()
+  const dispatch = useAppDispatch()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('general')
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
   const [tags, setTags] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!title.trim()) {
@@ -25,25 +26,34 @@ export function InlineTaskForm() {
       return
     }
 
-    addTask({
-      title: title.trim(),
-      description: description.trim(),
-      status: 'todo',
-      priority,
-      category,
-      totalTime: 0,
-      tags: tags
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== ''),
-    })
+    try {
+      const result = await dispatch(addTask({
+        title: title.trim(),
+        description: description.trim(),
+        status: 'todo',
+        priority,
+        category,
+        totalTime: 0,
+        tags: tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ''),
+      })).unwrap()
 
-    // Reset form
-    setTitle('')
-    setDescription('')
-    setCategory('general')
-    setPriority('medium')
-    setTags('')
+      console.log('Task added successfully:', result)
+
+      // Reset form on success
+      setTitle('')
+      setDescription('')
+      setCategory('general')
+      setPriority('medium')
+      setTags('')
+    } catch (error: any) {
+      console.error('Failed to add task - Full error:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error keys:', Object.keys(error || {}))
+      alert(`Failed to add task: ${error?.message || error || 'Unknown error'}`)
+    }
   }
 
   return (

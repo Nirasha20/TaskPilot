@@ -6,8 +6,12 @@ import { AuthRequest } from '../middleware/auth';
 export const getAllTasks = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
     const userId = (req as AuthRequest).user!.id;
+    
+    console.log('Fetching tasks for user:', userId);
 
     const tasks = await TaskModel.findAllByUserId(userId);
+    
+    console.log('Found tasks:', tasks.length);
 
     res.status(200).json({
       status: 'success',
@@ -66,6 +70,11 @@ export const updateTask = asyncHandler(
     // If status is being changed to completed, set completed_at
     if (updateData.status === 'completed' && !updateData.completed_at) {
       updateData.completed_at = new Date();
+    }
+    
+    // If status is being changed from completed to something else, clear completed_at
+    if (updateData.status && updateData.status !== 'completed') {
+      updateData.completed_at = null;
     }
 
     // If starting tracking, stop all other tracking tasks

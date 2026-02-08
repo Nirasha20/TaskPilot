@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { pool } from './config/database';
+import { pool, initializeDatabase, testConnection } from './config/database';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
 import taskRoutes from './routes/taskRoutes';
@@ -14,7 +14,7 @@ const port = process.env.PORT || 5000;
 // Middleware
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true,
   })
 );
@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/api/health', async (req: Request, res: Response) => {
+app.get('/api/health', async (_req: Request, res: Response) => {
   try {
     await pool.query('SELECT 1');
     res.json({
@@ -44,7 +44,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Root endpoint
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     message: 'Welcome to TaskPilot API',
     version: '1.0.0',
@@ -61,9 +61,18 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-const server = app.listen(port, () => {
+const server = app.listen(port, async () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
   console.log(`📊[database]: Connecting to PostgreSQL...`);
+  
+  // Test database connection and initialize tables
+  const connected = await testConnection();
+  if (connected) {
+    await initializeDatabase();
+  } else {
+    console.error('⚠️  Warning: Database connection failed. Please check your PostgreSQL setup.');
+    console.error('   Make sure PostgreSQL is running and credentials in .env are correct.');
+  }
 });
 
 // Graceful shutdown

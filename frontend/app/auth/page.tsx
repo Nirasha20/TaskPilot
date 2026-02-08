@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
-import { useAuth } from '@/lib/auth-context'
+import { useState, useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
+import { login as loginAction, register as registerAction, clearError } from '@/lib/redux/slices/authSlice'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -14,34 +15,46 @@ export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
-  const { login, register } = useAuth()
+  const dispatch = useAppDispatch()
   const router = useRouter()
+  
+  // Use Redux state for loading and error
+  const { isLoading, error, isAuthenticated } = useAppSelector((state) => state.auth)
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard')
+    }
+  }, [isAuthenticated, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
-    setLoading(true)
+    dispatch(clearError())
+
+    // Client-side validation for username in register mode
+    if (!isLogin && !username.trim()) {
+      // Could dispatch a custom validation error if needed
+      return
+    }
 
     try {
       if (isLogin) {
-        await login(email, password)
+        await dispatch(loginAction({ email, password })).unwrap()
       } else {
-        if (!username.trim()) {
-          setError('Username is required')
-          setLoading(false)
-          return
-        }
-        await register(email, username, password)
+        await dispatch(registerAction({ email, username, password })).unwrap()
       }
-      router.push('/dashboard')
+      // Redirect happens via useEffect when isAuthenticated becomes true
     } catch (err: any) {
-      setError(err.message || 'Authentication failed')
-    } finally {
-      setLoading(false)
+      // Error is already handled by Redux state
+      console.error('Auth error:', err)
     }
+  }
+
+  const handleToggleMode = () => {
+    setIsLogin(!isLogin)
+    dispatch(clearError())
   }
 
   return (
@@ -162,18 +175,15 @@ export default function AuthPage() {
               )}
 
               {/* Submit Button */}
-              <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" disabled={loading}>
-                {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
+              <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" disabled={isLoading}>
+                {isLoading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
               </Button>
 
               {/* Toggle Login/Register */}
               <div className="text-center text-sm">
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsLogin(!isLogin)
-                    setError('')
-                  }}
+                  onClick={handleToggleMode}
                   className="text-primary hover:underline"
                 >
                   {isLogin

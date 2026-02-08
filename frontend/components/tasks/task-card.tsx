@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Task, useTask } from '@/lib/task-context'
+import { Task } from '@/lib/redux/slices/tasksSlice'
+import { useAppDispatch } from '@/lib/redux/hooks'
+import { updateTask, deleteTask, startTimer, stopTimer } from '@/lib/redux/slices/tasksSlice'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -36,7 +38,7 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task }: TaskCardProps) {
-  const { updateTask, deleteTask, startTimer, stopTimer, toggleTaskStatus } = useTask()
+  const dispatch = useAppDispatch()
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
 
@@ -49,23 +51,31 @@ export function TaskCard({ task }: TaskCardProps) {
   const [editTags, setEditTags] = useState(task.tags.join(', '))
 
   const handleSaveEdit = () => {
-    updateTask(task.id, {
-      title: editTitle,
-      description: editDescription,
-      category: editCategory,
-      priority: editPriority,
-      status: editStatus,
-      tags: editTags
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag !== ''),
-    })
+    dispatch(updateTask({
+      id: task.id,
+      updates: {
+        title: editTitle,
+        description: editDescription,
+        category: editCategory,
+        priority: editPriority,
+        status: editStatus,
+        tags: editTags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter((tag) => tag !== ''),
+      }
+    }))
     setIsEditing(false)
   }
 
   const handleDelete = () => {
-    deleteTask(task.id)
+    dispatch(deleteTask(task.id))
     setIsDeleteConfirmOpen(false)
+  }
+
+  const toggleTaskStatus = (taskId: string) => {
+    const newStatus = task.status === 'completed' ? 'in-progress' : 'completed'
+    dispatch(updateTask({ id: taskId, updates: { status: newStatus } }))
   }
 
   const getPriorityColor = (priority: string) => {
@@ -184,7 +194,7 @@ export function TaskCard({ task }: TaskCardProps) {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => stopTimer(task.id)}
+                  onClick={() => dispatch(stopTimer({ taskId: task.id, totalTime: task.totalTime }))}
                   className="shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <Pause className="mr-2 h-4 w-4" />
@@ -193,7 +203,7 @@ export function TaskCard({ task }: TaskCardProps) {
               ) : (
                 <Button
                   size="sm"
-                  onClick={() => startTimer(task.id)}
+                  onClick={() => dispatch(startTimer(task.id))}
                   disabled={task.status === 'completed'}
                   className="bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 >

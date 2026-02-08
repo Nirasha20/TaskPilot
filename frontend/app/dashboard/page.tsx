@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/lib/auth-context'
+import { useAppSelector } from '@/lib/redux/hooks'
 import { DashboardHeader } from '@/components/dashboard/header'
 import { Analytics } from '@/components/dashboard/analytics'
 import { TimeDistributionChart } from '@/components/dashboard/time-distribution-chart'
@@ -11,7 +11,7 @@ import { InlineTaskForm } from '@/components/tasks/inline-task-form'
 import { AdvancedTaskList } from '@/components/tasks/advanced-task-list'
 
 export default function DashboardPage() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth)
   const router = useRouter()
 
   useEffect(() => {

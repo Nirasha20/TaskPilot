@@ -1,11 +1,11 @@
 'use client'
 
-import { useTask } from '@/lib/task-context'
+import { useAppSelector } from '@/lib/redux/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 export function DailyProgressChart() {
-  const { tasks } = useTask()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
 
   // Get last 7 days
   const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -16,9 +16,17 @@ export function DailyProgressChart() {
 
   const chartData = last7Days.map((date) => {
     const dateStr = date.toDateString()
-    const dayTasks = tasks.filter((t) => new Date(t.createdAt).toDateString() === dateStr)
-    const completed = dayTasks.filter((t) => t.status === 'completed').length
-    const timeSpent = dayTasks.reduce((sum, t) => sum + t.totalTime, 0)
+    
+    // Count tasks completed on this specific day
+    const completed = tasks.filter((t) => {
+      if (t.status !== 'completed' || !t.completedAt) return false
+      return new Date(t.completedAt).toDateString() === dateStr
+    }).length
+    
+    // Sum time from all tasks (approximation: distribute time across days)
+    // Note: For accurate daily tracking, we'd need time_entries table
+    const tasksWithTime = tasks.filter((t) => t.totalTime > 0)
+    const timeSpent = tasksWithTime.reduce((sum, t) => sum + t.totalTime, 0) / 7
 
     return {
       date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
