@@ -1,6 +1,6 @@
 'use client'
 
-import { useTask } from '@/lib/task-context'
+import { useAppSelector } from '@/lib/redux/hooks'
 import { StatsCard } from './stats-card'
 import { formatTime } from '@/lib/time-utils'
 import {
@@ -12,7 +12,7 @@ import {
 import { Clock, CheckCircle, TrendingUp, Target } from 'lucide-react'
 
 export function Analytics() {
-  const { tasks } = useTask()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
 
   const timeToday = getTimeSpentToday(tasks)
   const timeThisWeek = getTimeSpentThisWeek(tasks)

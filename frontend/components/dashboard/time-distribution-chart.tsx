@@ -1,13 +1,13 @@
 'use client'
 
-import { useTask } from '@/lib/task-context'
+import { useAppSelector } from '@/lib/redux/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
 const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
 
 export function TimeDistributionChart() {
-  const { tasks } = useTask()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
 
   // Group by category and sum time (only for tasks with tracked time)
   const categoryData = tasks.reduce(

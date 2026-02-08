@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useTask } from '@/lib/task-context'
+import { useAppSelector } from '@/lib/redux/hooks'
 import { TaskCard } from './task-card'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
@@ -11,7 +11,7 @@ import { Search, Filter, Download } from 'lucide-react'
 import { exportTasksToCSV } from '@/lib/csv-export'
 
 export function AdvancedTaskList() {
-  const { tasks } = useTask()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [filterPriority, setFilterPriority] = useState<string>('all')

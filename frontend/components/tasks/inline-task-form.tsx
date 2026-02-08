@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useTask } from '@/lib/task-context'
+import { useAppDispatch } from '@/lib/redux/hooks'
+import { addTask } from '@/lib/redux/slices/tasksSlice'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select } from '@/components/ui/select'
@@ -10,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Plus } from 'lucide-react'
 
 export function InlineTaskForm() {
-  const { addTask } = useTask()
+  const dispatch = useAppDispatch()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('general')
@@ -26,7 +27,7 @@ export function InlineTaskForm() {
     }
 
     try {
-      await addTask({
+      await dispatch(addTask({
         title: title.trim(),
         description: description.trim(),
         status: 'todo',
@@ -37,7 +38,7 @@ export function InlineTaskForm() {
           .split(',')
           .map((tag) => tag.trim())
           .filter((tag) => tag !== ''),
-      })
+      })).unwrap()
 
       // Reset form on success
       setTitle('')

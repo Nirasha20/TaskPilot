@@ -1,16 +1,18 @@
 'use client'
 
-import { useAuth } from '@/lib/auth-context'
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
+import { logout } from '@/lib/redux/slices/authSlice'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
 export function DashboardHeader() {
-  const { user, logout } = useAuth()
+  const user = useAppSelector((state) => state.auth.user)
+  const dispatch = useAppDispatch()
   const router = useRouter()
 
   const handleLogout = () => {
-    logout()
+    dispatch(logout())
     router.push('/auth')
   }
 

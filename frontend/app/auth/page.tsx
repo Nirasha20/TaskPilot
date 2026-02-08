@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/lib/auth-context'
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
+import { login as loginAction, register as registerAction } from '@/lib/redux/slices/authSlice'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -17,7 +18,7 @@ export default function AuthPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { login, register } = useAuth()
+  const dispatch = useAppDispatch()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,18 +28,18 @@ export default function AuthPage() {
 
     try {
       if (isLogin) {
-        await login(email, password)
+        await dispatch(loginAction({ email, password })).unwrap()
       } else {
         if (!username.trim()) {
           setError('Username is required')
           setLoading(false)
           return
         }
-        await register(email, username, password)
+        await dispatch(registerAction({ email, username, password })).unwrap()
       }
       router.push('/dashboard')
     } catch (err: any) {
-      setError(err.message || 'Authentication failed')
+      setError(err || 'Authentication failed')
     } finally {
       setLoading(false)
     }

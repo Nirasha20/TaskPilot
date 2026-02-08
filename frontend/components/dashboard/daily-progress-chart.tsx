@@ -1,11 +1,11 @@
 'use client'
 
-import { useTask } from '@/lib/task-context'
+import { useAppSelector } from '@/lib/redux/hooks'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 export function DailyProgressChart() {
-  const { tasks } = useTask()
+  const tasks = useAppSelector((state) => state.tasks.tasks)
 
   // Get last 7 days
   const last7Days = Array.from({ length: 7 }, (_, i) => {
