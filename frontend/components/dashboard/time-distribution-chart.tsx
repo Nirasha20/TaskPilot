@@ -9,22 +9,26 @@ const COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'
 export function TimeDistributionChart() {
   const { tasks } = useTask()
 
-  // Group by category and sum time
+  // Group by category and sum time (only for tasks with tracked time)
   const categoryData = tasks.reduce(
     (acc: Record<string, number>, task) => {
-      if (!acc[task.category]) {
-        acc[task.category] = 0
+      if (task.totalTime > 0) {
+        if (!acc[task.category]) {
+          acc[task.category] = 0
+        }
+        acc[task.category] += task.totalTime
       }
-      acc[task.category] += task.totalTime
       return acc
     },
     {}
   )
 
-  const chartData = Object.entries(categoryData).map(([category, time]) => ({
-    name: category,
-    value: Math.round(time / 60), // Convert to minutes
-  }))
+  const chartData = Object.entries(categoryData)
+    .map(([category, time]) => ({
+      name: category,
+      value: Math.round(time / 60), // Convert to minutes
+    }))
+    .filter((item) => item.value > 0)
 
   if (chartData.length === 0) {
     return (
