@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/api/health', async (req: Request, res: Response) => {
+app.get('/api/health', async (_req: Request, res: Response) => {
   try {
     await pool.query('SELECT 1');
     res.json({
@@ -44,7 +44,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
 // Root endpoint
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.json({
     message: 'Welcome to TaskPilot API',
     version: '1.0.0',

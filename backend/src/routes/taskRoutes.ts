@@ -10,9 +10,6 @@ import {
   deleteTask,
   startTimer,
   stopTimer,
-  getAnalytics,
-  getTimeDistribution,
-  getDailyProgress,
 } from '../controllers/taskController';
 
 const router = Router();
@@ -99,9 +96,6 @@ const taskIdValidation = [
 
 // Routes
 router.get('/', getAllTasks);
-router.get('/analytics', getAnalytics);
-router.get('/analytics/time-distribution', getTimeDistribution);
-router.get('/analytics/daily-progress', getDailyProgress);
 router.get('/:id', validate(taskIdValidation), getTask);
 router.post('/', validate(createTaskValidation), createTask);
 router.patch('/:id', validate(updateTaskValidation), updateTask);
