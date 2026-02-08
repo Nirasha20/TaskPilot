@@ -5,6 +5,7 @@ import { pool } from './config/database';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import authRoutes from './routes/authRoutes';
 import taskRoutes from './routes/taskRoutes';
+import { initializeDatabase, testConnection } from './config/initDatabase';
 
 dotenv.config();
 
@@ -61,9 +62,18 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Start server
-const server = app.listen(port, () => {
+const server = app.listen(port, async () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
   console.log(`📊[database]: Connecting to PostgreSQL...`);
+  
+  // Test database connection and initialize tables
+  const connected = await testConnection();
+  if (connected) {
+    await initializeDatabase();
+  } else {
+    console.error('⚠️  Warning: Database connection failed. Please check your PostgreSQL setup.');
+    console.error('   Make sure PostgreSQL is running and credentials in .env are correct.');
+  }
 });
 
 // Graceful shutdown
