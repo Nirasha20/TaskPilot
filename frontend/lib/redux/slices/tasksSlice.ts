@@ -93,6 +93,11 @@ export const addTask = createAsyncThunk(
   async (task: Omit<Task, 'id' | 'createdAt' | 'isTracking'>, { rejectWithValue }) => {
     try {
       const backendTask = toBackendFormat({ ...task, totalTime: 0, isTracking: false })
+      
+      console.log('Adding task - Frontend format:', task)
+      console.log('Adding task - Backend format:', backendTask)
+      console.log('API URL:', `${API_URL}/tasks`)
+      console.log('Auth headers:', getAuthHeaders())
 
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
@@ -101,6 +106,7 @@ export const addTask = createAsyncThunk(
       })
 
       const data = await response.json()
+      console.log('Add task response:', { ok: response.ok, status: response.status, data })
 
       if (!response.ok) {
         return rejectWithValue(data.message || 'Failed to create task')
@@ -108,6 +114,7 @@ export const addTask = createAsyncThunk(
 
       return transformTask(data.data?.task || data.task || data)
     } catch (error: any) {
+      console.error('Add task error:', error)
       return rejectWithValue(error.message || 'Network error')
     }
   }

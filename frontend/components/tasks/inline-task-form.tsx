@@ -27,7 +27,7 @@ export function InlineTaskForm() {
     }
 
     try {
-      await dispatch(addTask({
+      const result = await dispatch(addTask({
         title: title.trim(),
         description: description.trim(),
         status: 'todo',
@@ -40,15 +40,19 @@ export function InlineTaskForm() {
           .filter((tag) => tag !== ''),
       })).unwrap()
 
+      console.log('Task added successfully:', result)
+
       // Reset form on success
       setTitle('')
       setDescription('')
       setCategory('general')
       setPriority('medium')
       setTags('')
-    } catch (error) {
-      console.error('Failed to add task:', error)
-      alert('Failed to add task. Please check the console for details.')
+    } catch (error: any) {
+      console.error('Failed to add task - Full error:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error keys:', Object.keys(error || {}))
+      alert(`Failed to add task: ${error?.message || error || 'Unknown error'}`)
     }
   }
 

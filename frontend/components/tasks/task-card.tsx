@@ -194,7 +194,7 @@ export function TaskCard({ task }: TaskCardProps) {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => dispatch(stopTimer(task.id))}
+                  onClick={() => dispatch(stopTimer({ taskId: task.id, totalTime: task.totalTime }))}
                   className="shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <Pause className="mr-2 h-4 w-4" />
