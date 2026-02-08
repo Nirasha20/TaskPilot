@@ -21,9 +21,16 @@ export function formatTimeHMS(seconds: number): { hours: number; minutes: number
 }
 
 export function getTimeSpentToday(tasks: any[]): number {
-  const today = new Date().toDateString()
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  
   return tasks
-    .filter((task) => new Date(task.createdAt).toDateString() === today)
+    .filter((task) => {
+      // Include tasks that have been worked on (have time tracked)
+      return task.totalTime > 0
+    })
     .reduce((sum, task) => sum + task.totalTime, 0)
 }
 
@@ -31,7 +38,10 @@ export function getTimeSpentThisWeek(tasks: any[]): number {
   const now = new Date()
   const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   return tasks
-    .filter((task) => new Date(task.createdAt) >= weekAgo)
+    .filter((task) => {
+      // Include all tasks with tracked time
+      return task.totalTime > 0
+    })
     .reduce((sum, task) => sum + task.totalTime, 0)
 }
 
