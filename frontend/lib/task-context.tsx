@@ -142,7 +142,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
             // Sync with backend every 10 seconds
             if (newTime % 10 === 0) {
               fetch(`${API_URL}/tasks/${task.id}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ total_time: newTime }),
               }).catch((err) => console.error('Failed to sync time:', err))
@@ -235,9 +235,11 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (response.ok) {
+        const data = await response.json()
+        const updatedTask = transformTask(data.data?.task || data.task || data)
         setTasks(
           tasks.map((task) =>
-            task.id === taskId ? { ...task, isTracking: true } : { ...task, isTracking: false }
+            task.id === taskId ? updatedTask : { ...task, isTracking: false }
           )
         )
       }
@@ -251,14 +253,23 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
       const task = tasks.find((t) => t.id === taskId)
       if (!task) return
 
-      const response = await fetch(`${API_URL}/tasks/${taskId}/stop`, {
-        method: 'POST',
+      // First sync the current time to backend
+      await fetch(`${API_URL}/tasks/${taskId}`, {
+        method: 'PATCH',
         headers: getAuthHeaders(),
         body: JSON.stringify({ total_time: task.totalTime }),
       })
 
+      // Then stop the timer
+      const response = await fetch(`${API_URL}/tasks/${taskId}/stop`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+      })
+
       if (response.ok) {
-        setTasks(tasks.map((task) => (task.id === taskId ? { ...task, isTracking: false } : task)))
+        const data = await response.json()
+        const updatedTask = transformTask(data.data?.task || data.task || data)
+        setTasks(tasks.map((t) => (t.id === taskId ? updatedTask : t)))
       }
     } catch (error) {
       console.error('Error stopping timer:', error)
